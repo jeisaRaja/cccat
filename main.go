@@ -18,12 +18,19 @@ func main() {
 	if *filepath == "" {
 		*filepath = flag.Arg(0)
 	}
-  // fmt.Println("Filepath: ", *filepath)
 
-	f, err := os.Open(*filepath)
-	if err != nil {
-		fmt.Println(err)
+	//fmt.Println("Filepath: ", *filepath)
+	var reader *bufio.Reader
+	switch *filepath {
+	case "-":
+		reader = bufio.NewReader(os.Stdin)
+		reader.WriteTo(os.Stdout)
+	default:
+		f, err := os.Open(*filepath)
+		if err != nil {
+			fmt.Println(err)
+		}
+		reader = bufio.NewReader(f)
+		reader.WriteTo(os.Stdout)
 	}
-	reader := bufio.NewReader(f)
-  reader.WriteTo(os.Stdout)
 }
