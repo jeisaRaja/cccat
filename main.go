@@ -1,7 +1,8 @@
 package main
 
 import (
-	"bufio"
+	"cccat/program"
+	"flag"
 	"fmt"
 	"os"
 )
@@ -11,20 +12,13 @@ func main() {
 		fmt.Println("Usage: cccat <filepath>")
 		os.Exit(1)
 	}
+	ln := flag.Bool("n", false, "show line number")
+	flag.Parse()
+	p := program.Program{LineBool: *ln}
 
-	for _, fp := range os.Args[1:] {
-		if fp == "" {
-			reader := bufio.NewReader(os.Stdin)
-			reader.WriteTo(os.Stdout)
-		} else {
-			f, err := os.Open(fp)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			defer f.Close()
-			reader := bufio.NewReader(f)
-			_, err = reader.WriteTo(os.Stdout)
-		}
+	for _, arg := range flag.Args() {
+		p.AddFilepaths(arg)
 	}
+
+	p.ReadFiles()
 }
